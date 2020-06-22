@@ -1,0 +1,152 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="ssafy.bookjRent">
+	<select id="getAllRentBookList" parameterType="HashMap"
+		resultType="com.ssafy.project.model.BookjRent">
+		SELECT r.bookId, b.bookImg bookImg, b.bookISBN, b.bookName, r.rentTo,
+		r.rentFrom, r.userId, u.userName
+		FROM project.book AS b
+		LEFT JOIN
+		project.bookrent AS r
+		ON b.bookId = r.bookId
+		LEFT JOIN project.user AS u
+		ON u.userId = r.userId
+		WHERE r.delflag = 0 and 1=1
+		<if test="userRoleId != 1">
+			AND b.cityId = #{cityId}
+		</if>
+	</select>
+
+	<select id="getAllReturnBookList" parameterType="HashMap"
+		resultType="com.ssafy.project.model.BookjRent">
+		SELECT r.bookRentId, r.bookId, b.bookImg bookImg, b.bookName,
+		r.rentFrom, r.rentTo, r.realReturn, r.userId, u.userName
+		FROM
+		project.book b
+		LEFT JOIN project.bookrent AS r
+		ON b.bookId = r.bookId
+		LEFT JOIN project.user AS u
+		ON u.userId = r.userId
+		WHERE r.delflag = 1
+		and 1=1
+		<if test="userRoleId != 1">
+			AND b.cityId = #{cityId}
+		</if>
+		ORDER BY rentFrom DESC;
+	</select>
+
+	<select id="getAllExpiredBookList" parameterType="HashMap"
+		resultType="com.ssafy.project.model.BookjRent">
+		SELECT r.bookId, b.bookImg bookImg, b.bookName, r.rentTo, r.rentFrom,
+		r.realreturn, r.userId
+		FROM book b
+		LEFT JOIN bookrent r ON b.bookId =
+		r.bookId
+		WHERE rentTo &lt; DATE_FORMAT(now(), '%Y-%m-%d') and r.delflag
+		= 0 and 1=1
+		<if test="userRoleId != 1">
+			AND b.cityId = #{cityId}
+		</if>
+	</select>
+
+	<select id="getBookRentId" parameterType="java.lang.String"
+		resultType="java.lang.String">
+		<![CDATA[
+			 SELECT r.bookRentId from bookrent r where r.delFlag = 0 and r.bookId = #{bookId};
+		]]>
+	</select>
+
+	<select id="getRentCnt" parameterType="HashMap"
+		resultType="java.lang.Integer">
+		SELECT count(r.bookrentId) FROM bookrent r, book b
+		WHERE b.bookId = r.bookId AND rentTo &gt;= #{tday} AND realReturn is null
+		AND r.delFlag=0 AND 1=1
+		<if test="userRoleId != 1">
+			AND b.cityId = #{cityId}
+		</if>
+	</select>
+
+	<select id="getTodayReturnCnt" parameterType="java.lang.String"
+		resultType="java.lang.Double">
+		<!-- <![CDATA[ -->
+		SELECT COUNT(r.bookrentId)
+		FROM bookrent r, book b
+		WHERE b.bookId =
+		r.bookId AND DATE_FORMAT(rentTo, '%Y-%m-%d') = DATE_FORMAT(NOW(),
+		'%Y-%m-%d') AND b.cityId = #{cityId};
+		<!-- ]]> -->
+	</select>
+
+	<select id="getRealReturnCnt" parameterType="java.lang.String"
+		resultType="java.lang.Double">
+		SELECT COUNT(r.bookrentId) FROM bookrent r, book b WHERE b.bookId =
+		r.bookId and DATE_FORMAT(rentTo, '%Y-%m-%d') = DATE_FORMAT(now(),
+		'%Y-%m-%d') AND realReturn is not null and r.delFlag = 1
+		<!-- <if test="userRoleId != 1"> -->
+		AND b.cityId = #{cityId}
+		<!-- </if> -->
+	</select>
+
+	<select id="getExpireBookCnt" parameterType="HashMap"
+		resultType="java.lang.Integer">
+		SELECT count(r.bookrentId)
+		FROM bookrent r, book b
+		WHERE b.bookId =
+		r.bookId and DATE_FORMAT(rentTo, '%Y-%m-%d') &lt;
+		DATE_FORMAT(now(),
+		'%Y-%m-%d') AND realReturn is null AND r.delFlag = 0
+		<if test="userRoleId != 1">
+			AND b.cityId = #{cityId}
+		</if>
+	</select>
+
+	<select id="getEpBookCnt" parameterType="HashMap"
+		resultType="java.lang.Double">
+		SELECT count(r.bookrentId)
+		FROM bookrent r, book b
+		WHERE
+		b.bookId = r.bookId
+		AND DATE_FORMAT(rentTo, '%Y-%m-%d') &lt; DATE_FORMAT(now(), '%Y-%m-%d')
+		AND realReturn is null AND r.delFlag = 0 AND b.cityId = #{tmpCityId}
+	</select>
+
+	<select id="getRentCntListByPeriod" parameterType="HashMap"
+		resultType="com.ssafy.project.model.BookRentByMonth">
+		SELECT count(*) as cnt, DATE_FORMAT(rentFrom, '%Y-%m') as month
+		FROM
+		bookrent r, book b
+		WHERE r.bookId = b.bookId AND 1=1
+		<if test="userRoleId != 1">
+			AND b.cityId = #{cityId}
+		</if>
+		GROUP BY DATE_FORMAT(rentFrom, '%Y-%m')
+		ORDER BY DATE_FORMAT(rentFrom,
+		'%Y-%m') DESC;
+	</select>
+
+	<select id="getTodayReal" parameterType="java.lang.String"
+		resultType="java.lang.Double">
+		SELECT COUNT(r.bookrentId) FROM bookrent r, book b WHERE b.bookId =
+		r.bookId and DATE_FORMAT(realReturn, '%Y-%m-%d') &lt;=
+		DATE_FORMAT(now(),
+		'%Y-%m-%d') AND DATE_FORMAT(rentTo, '%Y-%m-%d')
+		&lt;= DATE_FORMAT(now(),
+		'%Y-%m-%d')
+		<if test="userRoleId != 1">
+			AND b.cityId = #{cityId}
+		</if>
+	</select>
+
+	<select id="getTodayRet" parameterType="java.lang.String"
+		resultType="java.lang.Double">
+		SELECT count(r.bookrentId) FROM bookrent r, book b
+		WHERE b.bookId =
+		r.bookId and DATE_FORMAT(rentTo, '%Y-%m-%d') &lt;= DATE_FORMAT(now(),
+		'%Y-%m-%d') AND 1=1
+		<if test="userRoleId != 1">
+			AND b.cityId = #{cityId}
+		</if>
+	</select>
+</mapper>

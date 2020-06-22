@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="ssafy.book">
+	<!-- <select id="getAllBookList" resultType="com.ssafy.project.model.Book"> SELECT ANY_VALUE (bookId), ANY_VALUE (bookISBN), ANY_VALUE (bookName), ANY_VALUE (bookPrice), ANY_VALUE (publisher), ANY_VALUE (publishDate), ANY_VALUE (author), ANY_VALUE (bookImg), ANY_VALUE (rentCnt), ANY_VALUE (categoryId), 
+		ANY_VALUE (cityId), ANY_VALUE (classId) FROM project.book GROUP BY bookISBN; </select> -->
+	<select id="getAllBookList" resultType="com.ssafy.project.model.Book">
+		SELECT bookISBN, bookName, bookPrice, publisher, publishDate, author, bookImg, sum(rentCnt) as rentCnt, categoryId, bookSummary
+		FROM project.book
+		GROUP BY bookISBN;
+	</select>
+
+	<insert id="addBook" parameterType="com.ssafy.project.model.Book">
+		INSERT INTO project.book(bookId, bookName, bookPrice, publisher, publishDate, author, bookImg, rentCnt, categoryId, cityId, classId)
+		VALUES(#{bookId}, #{bookName}, #{bookPrice}, #{publisher}, #{publishDate}, #{author}, #{bookImg}, #{rentCnt}, #{categoryId},
+		#{cityId}, #{classId})
+	</insert>
+
+	<select id="getBookById" parameterType="java.lang.String" resultType="com.ssafy.project.model.Book">
+		SELECT bookId, bookISBN, bookName, bookPrice, publisher, publishDate, author, bookImg, rentCnt, categoryId, cityId, classId
+		FROM project.book
+		WHERE bookId = #{bookId}
+	</select>
+
+	<select id="getBookByName" parameterType="java.lang.String" resultType="com.ssafy.project.model.Book">
+		SELECT bookId, bookISBN, bookName, bookPrice, publisher, publishDate, author, bookImg, rentCnt, categoryId, cityId, classId
+		FROM project.book
+		WHERE bookName = #{bookName}
+		LIMIT 1
+	</select>
+
+	<select id="getBookByISBN" parameterType="java.lang.String" resultType="com.ssafy.project.model.Book">
+		SELECT bookId, bookISBN, bookName, bookPrice, publisher, publishDate, author, bookImg, (SELECT sum(rentCnt) FROM project.book WHERE bookISBN = #{bookISBN}) AS rentCnt, categoryId, cityId, classId
+		FROM project.book
+		WHERE bookISBN = #{bookISBN}
+		LIMIT 1
+	</select>
+
+	<select id="getBookListbyCategoryId" parameterType="com.ssafy.project.model.User" resultType="com.ssafy.project.model.Book">
+		SELECT bookISBN, bookName, bookPrice, publisher, publishDate, author, bookImg, categoryId
+		FROM project.book
+		WHERE bookId
+		IN (SELECT bookId
+		FROM project.bookrent
+		WHERE userId = #{userId})
+		UNION
+		SELECT bookISBN, bookName, bookPrice, publisher, publishDate, author, bookImg, categoryId
+		FROM project.book
+		WHERE categoryId
+		IN (SELECT categoryId
+		FROM project.interestcategory
+		WHERE userId = #{userId})
+		GROUP BY bookISBN
+		LIMIT 10;
+	</select>
+
+	<update id="upRentCnt" parameterType="com.ssafy.project.model.Book">
+		UPDATE project.book
+		SET rentCnt = rentCnt + 1
+		WHERE bookId = #{bookId}
+	</update>
+
+	<select id="getBestBookList" resultType="com.ssafy.project.model.Book">
+		<!-- SELECT bookId, bookISBN, bookName, bookPrice, publisher, publishDate, author, ANY_VALUE (bookImg), ANY_VALUE (rentCnt), ANY_VALUE (categoryId), ANY_VALUE (cityId), ANY_VALUE (classId) FROM project.book GROUP BY bookISBN ORDER BY rentCnt DESC LIMIT 10; -->
+		SELECT bookISBN, bookName, bookPrice, publisher, publishDate, author, bookImg, sum(rentCnt), categoryId, cityId, classId
+		FROM project.book
+		GROUP BY bookISBN
+		ORDER BY sum(rentCnt) DESC
+		LIMIT 10;
+	</select>
+
+	<select id="getAllBookByISBNandCityId" parameterType="com.ssafy.project.model.Book" resultType="com.ssafy.project.model.Book">
+		SELECT bookId, bookISBN, bookName, bookPrice, publisher, publishDate, author, bookImg, rentCnt, categoryId, cityId, classId
+		FROM project.book
+		WHERE bookISBN = #{bookISBN} and cityId = #{cityId}
+	</select>
+
+	<select id="getAllBookRentOKByCityId" parameterType="java.lang.String" resultType="com.ssafy.project.model.Book">
+		SELECT bookId, bookISBN, bookName, bookPrice, publisher, publishDate, author, bookImg, rentCnt, categoryId, cityId, classId
+		FROM project.book
+		WHERE bookId
+		NOT IN (select bookId from project.bookrent where delFlag = 0)
+		AND cityId = #{cityId}
+		GROUP BY bookISBN
+	</select>
+	
+	<select id="getAllBookByCategoryId" parameterType="java.lang.String" resultType="com.ssafy.project.model.Book">
+		SELECT bookId, bookISBN, bookName, bookPrice, publisher, publishDate, author, bookImg, rentCnt, categoryId, cityId, classId
+		FROM project.book
+		WHERE categoryId = #{categoryId}
+		GROUP BY bookISBN
+	</select>
+	
+	<select id="getTodayBook" resultType="com.ssafy.project.model.Book">
+		SELECT bookId, bookISBN, bookName, bookPrice, publisher, publishDate, author, bookImg, rentCnt, categoryId, cityId, classId
+		FROM project.book
+		WHERE delFlag = 2;
+	</select>
+	
+	<select id="cntRentableBookByISBNandCityId" parameterType="com.ssafy.project.model.Book" resultType="java.lang.Integer">
+		select (select count(*) from project.book where bookISBN = #{bookISBN} and cityId = #{cityId}) - (select count(*) from project.bookrent where bookId in (select bookId from project.book where bookISBN = #{bookISBN} and cityId = #{cityId}) and delFlag = 0)
+	</select>
+	
+	<select id="cntAllBookByISBNandCityId" parameterType="com.ssafy.project.model.Book" resultType="java.lang.Integer">
+		select count(*) from project.book where bookISBN = #{bookISBN} and cityId = #{cityId}
+	</select>
+	
+</mapper>

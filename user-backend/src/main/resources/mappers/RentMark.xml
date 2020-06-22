@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="ssafy.rentmark">
+	<!-- <select id="getAllBookList" resultType="com.ssafy.project.model.Book"> SELECT ANY_VALUE (bookId), ANY_VALUE (bookISBN), ANY_VALUE (bookName), ANY_VALUE (bookPrice), ANY_VALUE (publisher), ANY_VALUE (publishDate), ANY_VALUE (author), ANY_VALUE (bookImg), ANY_VALUE (rentCnt), ANY_VALUE (categoryId), 
+		ANY_VALUE (cityId), ANY_VALUE (classId) FROM project.book GROUP BY bookISBN; </select> -->
+	<insert id="insertRentMark" parameterType="com.ssafy.project.model.RentMark">
+		INSERT INTO project.rentmark VALUES (#{bookISBN},#{cityId},#{userId});
+	</insert>
+	
+	<delete id="deleteRentMark" parameterType="com.ssafy.project.model.RentMark">
+		DELETE FROM project.rentmark WHERE bookISBN = #{bookISBN} and cityId = #{cityId}
+	</delete>
+	
+	<select id="getAllUser" parameterType="com.ssafy.project.model.RentMark" resultType="java.lang.String">
+		SELECT userId FROM project.rentmark WHERE bookISBN = #{bookISBN} and cityId = #{cityId};
+	</select>
+	
+	
+	
+</mapper>

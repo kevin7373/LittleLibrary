@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="ssafy.reqBook">
+	<select id="getReqBookMain" parameterType="HashMap"
+		resultType="com.ssafy.project.model.ReqBookMain">
+		SELECT bookISBN, bookName, count(bookISBN) cnt, have
+		FROM project.reqbook where delFlag = 0 and 1=1
+		<if test="userRoleId !=1">
+			AND reqCity = #{reqCity}
+		</if>
+		GROUP BY bookISBN
+		ORDER BY cnt DESC
+		LIMIT 5;
+	</select>
+
+	<select id="getAllReqBookList" parameterType="HashMap"
+		resultType="com.ssafy.project.model.ReqBook">
+		SELECT reqId, reqCity, userClass, consultant, coach, pjtWeek, period,
+		userId, userName, userTeam, bookName, bookISBN, publisher, bookPrice,
+		reqReason, have, bookImg, delFlag
+		FROM project.reqbook
+		WHERE delflag = 0 and 1=1
+		<if test="userRoleId !=1">
+			AND reqCity = #{reqCity}
+		</if>
+		ORDER BY reqId DESC
+	</select>
+
+	<update id="insertDelFlag" parameterType="java.lang.String">
+		UPDATE project.reqbook SET delflag = 1 WHERE reqId = #{reqId};
+	</update>
+	
+	<select id="getReqBookDetailByReqId" parameterType="java.lang.String" resultType="com.ssafy.project.model.ReqBookDetail">
+		SELECT r.reqId, r.reqCity, r.userClass, r.consultant, r.coach, r.pjtWeek, r.period, r.userId, r.userName, r.userTeam, r.bookName, r.bookISBN, r.publisher, r.bookPrice, r.reqReason, r.have, r.bookImg, r.delFlag
+		FROM project.reqbook as r
+		WHERE r.delFlag = 0
+		AND r.reqId = #{reqId};
+	</select>
+</mapper>

@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="ssafy.notice">
+
+	<select id="getNotice" parameterType="com.ssafy.project.model.Notice" resultType="com.ssafy.project.model.Notice">
+		SELECT noticeId, noticeTitle, noticeContent, noticeWriteDate, noticeViewCnt, userId from project.notice WHERE noticeId = #{noticeId}
+	</select>
+
+	<insert id="insertNotice" parameterType="com.ssafy.project.model.Notice">
+		insert into project.notice(noticeTitle, noticeContent, noticeWriteDate, noticeViewCnt, userId) values(#{noticeTitle},#{noticeContent},#{noticeWriteDate},#{noticeViewCnt},#{userId});
+	</insert>
+
+	<update id="updateNotice" parameterType="com.ssafy.project.model.Notice">
+		UPDATE project.notice SET noticeTitle = #{noticeTitle}, noticeContent = #{noticeContent} WHERE noticeId = #{noticeId}
+	</update>
+
+	<delete id="deleteNotice" parameterType="com.ssafy.project.model.Notice">
+		DELETE FROM project.notice WHERE noticeId = #{noticeId}
+	</delete>
+
+	<select id="getAllNoticeList" resultType="com.ssafy.project.model.Notice">
+		SELECT noticeId, noticeTitle, noticeContent, noticeWriteDate, noticeViewCnt, userId from project.notice
+	</select>
+
+	<update id="cntUpNoticeView" parameterType="com.ssafy.project.model.Notice">
+		UPDATE project.notice SET noticeViewCnt = noticeViewCnt+1 WHERE noticeId = #{noticeId}
+	</update>
+
+
+</mapper>

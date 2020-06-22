@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="ssafy.bookComment">
+
+	<insert id="insertBookComment" parameterType="com.ssafy.project.model.BookComment">
+		INSERT INTO project.bookcomment(bookCommentContent, bookCommentWriter, bookCommentDate, bookISBN)
+		VALUES(#{bookCommentContent}, #{bookCommentWriter}, #{bookCommentDate}, #{bookISBN})
+	</insert>
+
+	<select id="getBookComment" parameterType="java.lang.String" resultType="com.ssafy.project.model.BookComment">
+		SELECT bookCommentId, bookCommentContent, bookCommentWriter, bookCommentDate, bookISBN
+		FROM project.bookcomment
+		WHERE bookISBN = #{bookISBN}
+	</select>
+
+	<select id="getMyBookComment" parameterType="java.lang.String" resultType="com.ssafy.project.model.BookComment">
+		SELECT bookCommentId, bookCommentContent, bookCommentWriter, bookCommentDate, bookName
+		FROM project.bookcomment
+		WHERE bookCommentWriter = #{bookCommentWriter}
+	</select>
+
+	<update id="updateBookComment" parameterType="com.ssafy.project.model.BookComment">
+		UPDATE project.bookcomment
+		SET bookCommentContent = #{bookCommentContent}, bookCommentDate = #{bookCommentDate}
+		WHERE bookCommentId = #{bookCommentId}
+	</update>
+
+	<delete id="deleteBookComment" parameterType="java.lang.String">
+		DELETE
+		FROM proejct.bookcomment
+		WHERE bookCommentId = #{bookCommentId}
+	</delete>
+
+</mapper>

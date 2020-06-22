@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="ssafy.reqbook">
+
+	<insert id="insertReqBook" parameterType="com.ssafy.project.model.ReqBook">
+		INSERT INTO project.reqbook(reqCity,userClass,consultant,coach,pjtWeek,period,userName,userTeam,bookName,bookISBN,publisher,bookPrice,reqReason,have,bookImg,delFlag,userId)
+		VALUES (#{reqCity},#{userClass},'','','','',#{userName},#{userTeam},#{bookName},#{bookISBN},#{publisher},#{bookPrice},#{reqReason},#{have},#{bookImg},0,#{userId})
+	</insert>
+
+	<select id="getAllReqBook" resultType="com.ssafy.project.model.ReqBook">
+		SELECT reqId, reqCity, userClass, consultant, coach, pjtWeek, period, userName, userTeam, bookName, bookISBN, publisher, bookPrice, reqReason, have, bookImg, delFlag, userId
+		FROM project.reqbook
+		WHERE userId = #{userId} and delFlag = 0
+	</select>
+</mapper>

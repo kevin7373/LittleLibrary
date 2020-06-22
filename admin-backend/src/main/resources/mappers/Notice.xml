@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="ssafy.notice">
+
+	<select id="getNotice"
+		parameterType="com.ssafy.project.model.Notice"
+		resultType="com.ssafy.project.model.Notice">
+		SELECT noticeId, noticeTitle, noticeContent,
+		noticeWriteDate, noticeViewCnt, userId
+		FROM project.notice
+		WHERE noticeId = #{noticeId}
+	</select>
+
+	<insert id="insertNotice"
+		parameterType="com.ssafy.project.model.Notice">
+		INSERT INTO project.notice(noticeTitle, noticeContent,
+					noticeWriteDate, noticeViewCnt, userId)
+		VALUES(#{noticeTitle}, #{noticeContent}, 
+			   #{noticeWriteDate}, #{noticeViewCnt}, #{userId});
+	</insert>
+
+	<update id="updateNotice"
+		parameterType="com.ssafy.project.model.Notice">
+		UPDATE project.notice
+		SET noticeTitle = #{noticeTitle}, noticeContent = #{noticeContent}
+		WHERE noticeId = #{noticeId}
+	</update>
+
+	<delete id="deleteNotice"
+		parameterType="com.ssafy.project.model.Notice">
+		DELETE
+		FROM project.notice
+		WHERE noticeId = #{noticeId}
+	</delete>
+
+	<select id="getAllNoticeList"
+		resultType="com.ssafy.project.model.Notice">
+		SELECT n.noticeId, n.noticeTitle, n.noticeContent, n.noticeWriteDate, n.noticeViewCnt, n.userId, u.userName
+		FROM project.notice AS n
+		LEFT JOIN project.user AS u
+		ON n.userId = u.userId
+	</select>
+
+	<update id="cntUpNoticeView"
+		parameterType="com.ssafy.project.model.Notice">
+		UPDATE project.notice
+		SET noticeViewCnt = noticeViewCnt + 1
+		WHERE noticeId = #{noticeId}
+	</update>
+	
+	<select id="getNoticeByNoticeId"
+		parameterType="java.lang.Integer"
+		resultType="com.ssafy.project.model.Notice">
+		SELECT n.noticeId, n.noticeTitle, n.noticeContent,
+		n.noticeWriteDate, n.noticeViewCnt, n.userId, u.userName
+		FROM project.notice as n
+		LEFT JOIN project.user as u
+		ON n.userId = u.userId
+		WHERE n.noticeId = #{noticeId}
+	</select>
+	
+	
+
+
+</mapper>

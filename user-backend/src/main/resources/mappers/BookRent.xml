@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="ssafy.bookrent">
+
+	<select id="cntRentedBook" parameterType="com.ssafy.project.model.BookRent" resultType="java.lang.Integer">
+		SELECT count(*) from project.bookrent WHERE bookId = #{bookId} and delFlag = 0
+	</select>
+
+	<insert id="insertBookRent" parameterType="com.ssafy.project.model.BookRent">
+		INSERT into project.bookrent(rentFrom, rentTo, delFlag, userId, bookId)
+		VALUES(#{rentFrom},#{rentTo},#{delFlag},#{userId},#{bookId})
+	</insert>
+
+	<update id="deleteBookRent" parameterType="com.ssafy.project.model.BookRent">
+		UPDATE project.bookrent SET realReturn = #{realReturn}, delFlag = 1 WHERE bookId = #{bookId} and userId = #{userId} and delFlag = 0
+	</update>
+
+	<select id="getBookRentByUser" parameterType="com.ssafy.project.model.BookRent" resultType="com.ssafy.project.model.BookRent">
+		SELECT bookRentId, rentFrom, rentTo, delFlag, userId, bookId
+		FROM project.bookrent
+		WHERE userId = #{userId} and delFlag = 0
+	</select>
+
+	<select id="getBookRentByUserAll" parameterType="com.ssafy.project.model.BookRent" resultType="com.ssafy.project.model.BookRent">
+		SELECT bookRentId, rentFrom, rentTo, realReturn, delFlag, userId, bookId FROM project.bookrent WHERE userId = #{userId}
+	</select>
+
+	<select id="cntBookRentByUser" parameterType="com.ssafy.project.model.BookRent" resultType="java.lang.Integer">
+		SELECT count(*) FROM project.bookrent WHERE userId = #{userId} and delFlag = 0
+	</select>
+
+	<select id="getBookIdByUserId" parameterType="java.lang.String" resultType="com.ssafy.project.model.BookRent">
+		SELECT bookId, rentFrom, rentTo, realReturn, delFlag, userId, bookId
+		FROM project.bookrent
+		WHERE userId = #{userId} AND delFlag = 0
+	</select>
+	
+	
+
+</mapper>

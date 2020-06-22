@@ -1,0 +1,53 @@
+{
+  "name": "ssafy",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "serve": "vue-cli-service serve",
+    "build": "vue-cli-service build"
+  },
+  "dependencies": {
+    "@mdi/js": "^4.8.95",
+    "axios": "^0.19.1",
+    "core-js": "^3.6.2",
+    "instascan": "^1.0.0",
+    "jquery": "^3.4.1",
+    "js-cookie": "^2.2.1",
+    "jsonwebtoken": "^8.5.1",
+    "jwt-decode": "^2.2.0",
+    "moment": "^2.24.0",
+    "register-service-worker": "^1.6.2",
+    "sketch.js": "^1.1.1",
+    "swiper": "^5.3.1",
+    "url-search-params-polyfill": "^8.0.0",
+    "vee-validate": "^2.2.15",
+    "vue": "^2.6.11",
+    "vue-clamp": "^0.2.2",
+    "vue-grid-layout": "^2.3.7",
+    "vue-jwt-decode": "^0.1.0",
+    "vue-momentjs": "^0.1.2",
+    "vue-responsive-dash": "^0.3.8",
+    "vue-router": "^3.1.5",
+    "vue-simplemde": "^1.0.4",
+    "vuetify": "^2.2.7",
+    "vuex": "^3.1.2",
+    "vuex-persistedstate": "^2.7.0",
+    "webpack-dev-server": "^3.10.3"
+  },
+  "devDependencies": {
+    "@vue/cli-plugin-babel": "^4.1.2",
+    "@vue/cli-plugin-pwa": "^4.1.2",
+    "@vue/cli-service": "^4.1.2",
+    "deepmerge": "^4.2.2",
+    "fibers": "^4.0.2",
+    "font-awesome": "^4.7.0",
+    "node-sass": "^4.13.0",
+    "sass": "^1.24.2",
+    "sass-loader": "^8.0.0",
+    "stylus": "^0.54.5",
+    "stylus-loader": "^3.0.1",
+    "vue-cli-plugin-vuetify": "^2.0.3",
+    "vue-template-compiler": "^2.5.21",
+    "vuetify-loader": "^1.0.5"
+  }
+}

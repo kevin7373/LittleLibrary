@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="ssafy.faq">
+
+	<select id="getFaq" parameterType="com.ssafy.project.model.Faq"
+		resultType="com.ssafy.project.model.Faq">
+		SELECT faqId, faqTitle, faqContent, faqWriteDate,
+		faqViewCnt, userId
+		FROM project.faq
+		WHERE faqId = #{faqId}
+	</select>
+
+	<insert id="insertFaq"
+		parameterType="com.ssafy.project.model.Faq">
+		INSERT INTO project.faq(faqTitle, faqContent,
+		faqWriteDate, faqViewCnt, userId)
+		VALUES(#{faqTitle},#{faqContent},#{faqWriteDate},#{faqViewCnt},#{userId});
+	</insert>
+
+	<update id="updateFaq"
+		parameterType="com.ssafy.project.model.Faq">
+		UPDATE project.faq
+		SET faqTitle = #{faqTitle}, faqContent = #{faqContent}
+		WHERE faqId = #{faqId}
+	</update>
+
+	<delete id="deleteFaq"
+		parameterType="com.ssafy.project.model.Faq">
+		DELETE
+		FROM project.faq
+		WHERE faqId = #{faqId}
+	</delete>
+
+	<select id="getAllFaqList"
+		resultType="com.ssafy.project.model.Faq">
+		SELECT f.faqId, f.faqTitle, f.faqContent, f.faqWriteDate,
+		f.faqViewCnt, f.userId, u.userName
+		FROM project.faq as f
+		LEFT JOIN project.user as u
+		ON f.userId = u.userId
+	</select>
+
+	<update id="cntUpFaqView"
+		parameterType="com.ssafy.project.model.Faq">
+		UPDATE project.faq
+		SET faqViewCnt = faqViewCnt + 1
+		WHERE faqId = #{faqId}
+	</update>
+	
+	<select id="getFaqByFaqId" parameterType="java.lang.Integer"
+		resultType="com.ssafy.project.model.Faq">
+		SELECT f.faqId, f.faqTitle, f.faqContent, f.faqWriteDate,
+		f.faqViewCnt, f.userId, u.userName
+		FROM project.faq as f
+		LEFT JOIN project.user as u
+		ON f.userId = u.userId
+		WHERE faqId = #{faqId}
+	</select>
+
+
+</mapper>

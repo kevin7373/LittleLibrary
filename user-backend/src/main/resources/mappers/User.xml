@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="ssafy.user">
+
+	<select id="getPassWord" parameterType="com.ssafy.project.model.User" resultType="java.lang.String">
+		SELECT userPw FROM project.user WHERE userId = #{userId}
+	</select>
+
+	<insert id="insertUser" parameterType="com.ssafy.project.model.User">
+		insert into project.user(userId, userPw, studentId,
+		email, userName, phone, delFlag, overduePeriod, userRoleId, cityId, classId)
+		values(#{userId}, #{userPw}, #{studentId}, #{email}, #{userName},
+		#{phone}, #{delFlag}, #{overduePeriod}, #{userRoleId}, #{cityId}, #{classId});
+	</insert>
+
+	<select id="getUser" parameterType="java.lang.String" resultType="com.ssafy.project.model.User">
+		<!-- SELECT userId, userPw, studentId, email, userName, phone, userImg,
+		delFlag, overduePeriod, userRoleId, cityId, classId from project.user WHERE
+		userId = #{userId} -->
+		SELECT u.userImg, u.userId, u.studentId, u.email, u.userName, u.phone,
+		u.overduePeriod, u.userRoleId, u.cityId, u.classId, r.roleName as userRoleName, city.cityName, class.classRoom as className
+		FROM project.user as u
+		LEFT JOIN project.userrole as r
+		ON r.userRoleId = u.userRoleId
+		LEFT JOIN project.city as city
+		ON city.cityId = u.cityId
+		LEFT JOIN project.class as class
+		ON class.classId = u.classId
+		WHERE userId = #{userId} and delFlag = 0
+	</select>
+
+	<insert id="insertIC" parameterType="com.ssafy.project.model.InterestCategory">
+		INSERT
+		INTO project.interestcategory
+		VALUES(#{userId}, #{categoryId});
+	</insert>
+
+	<select id="getInterestCategory" parameterType="java.lang.String" resultType="java.lang.String">
+		SELECT categoryId
+		FROM project.interestcategory
+		WHERE userId = #{userId}
+	</select>
+
+	<update id="updateInfo" parameterType="com.ssafy.project.model.User">
+		<if test="userPw != null and userPw != '' and studentId != null and studentId != '' and email != null and email != '' and userName != null and userName != '' and phone != null and phone != '' and cityId != null and cityId != ''">
+			UPDATE project.user
+			SET userPw=#{userPw}, studentId=#{studentId}, email=#{email}, userName=#{userName}, phone=#{phone}, cityId=#{cityId}, classId=#{classId}
+			WHERE userId=#{userId}
+		</if>
+	</update>
+
+	<delete id="deleteIC" parameterType="java.lang.String">
+		DELETE
+		FROM project.interestcategory
+		WHERE userId = #{userId}
+	</delete>
+
+	<select id="getAllUser" resultType="com.ssafy.project.model.User">
+		SELECT userId, userPw, studentId, email, userName, phone, overduePeriod, userRoleId, cityId
+		FROM project.user
+		WHERE delFlag != 1
+	</select>
+
+	<select id="checkId" parameterType="java.lang.String" resultType="java.lang.Integer">
+		SELECT count(userId)
+		FROM project.user
+		WHERE userId = #{userId}
+	</select>
+
+	<update id="setOverduePeriod" parameterType="com.ssafy.project.model.User">
+		UPDATE project.user
+		SET overduePeriod = #{overduePeriod}
+		WHERE userId = #{userId}
+	</update>
+
+	<update id="setUserPw" parameterType="com.ssafy.project.model.User">
+		UPDATE project.user SET userPw = #{userPw} WHERE userId = #{userId}
+	</update>
+
+	<select id="checkStudentId" parameterType="java.lang.String" resultType="java.lang.Integer">
+		SELECT count(studentId)
+		FROM project.user
+		WHERE studentId = #{studentId}
+	</select>
+
+	<update id="setUserImg" parameterType="com.ssafy.project.model.User">
+		UPDATE project.user SET userImg = #{userImg} WHERE userId = #{userId}
+	</update>
+
+</mapper>

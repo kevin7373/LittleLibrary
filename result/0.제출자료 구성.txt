@@ -1,0 +1,8 @@
+SSAFY 작은 도서관 SOLUTION: BOOK SSAFY
+제출자료
+0. 제출자료구성 
+1. 대전 2기 devengers 공통프로젝트 발표자료
+2. USER 테스트케이스
+3. ADMIN 테스트 케이스
+4. AWS URL, TEST ID, 예시 QR코드
+5. 도서등록양식

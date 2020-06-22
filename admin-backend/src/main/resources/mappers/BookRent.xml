@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="ssafy.bookRent">
+
+	<select id="getRentBookCntByBookId" parameterType="com.ssafy.project.model.RentCnt" resultType="java.lang.Integer">
+		<![CDATA[
+			SELECT count(bookId)
+			FROM bookrent
+			WHERE bookId = #{bookId} AND rentTo >= #{today} AND delFlag = 0
+		]]>
+	</select>
+
+	<select id="getExpireBookCntByBookId" parameterType="com.ssafy.project.model.RentCnt" resultType="java.lang.Integer">
+		<![CDATA[SELECT count(bookId)
+			FROM bookrent
+			WHERE bookId = #{bookId} AND rentTo < #{today} AND delFlag = 0]]>
+	</select>
+
+	<select id="getBookIdByUserId" parameterType="java.lang.String" resultType="com.ssafy.project.model.BookRent">
+		SELECT bookId, rentFrom, rentTo, realReturn, delFlag, userId, bookId
+		FROM project.bookrent
+		WHERE userId = #{userId} AND delFlag = 0
+	</select>
+
+	<select id="getUserIdByBookId" parameterType="java.lang.String" resultType="java.lang.String">
+		SELECT userId
+		FROM project.bookrent
+		WHERE bookId = #{bookId} ORDER BY rentFrom DESC LIMIT 1
+	</select>
+	
+	<select id="isRentedByBookId" parameterType="java.lang.String" resultType="java.lang.Integer">
+		SELECT count(bookId)
+		FROM project.bookrent
+		WHERE bookId = #{bookId}
+	</select>
+	
+	<delete id="deleteBookRentHistory" parameterType="java.lang.String">
+		DELETE FROM project.bookrent WHERE bookId = #{bookId}
+	</delete>
+	
+	<select id="getRemainDay" parameterType="HashMap" resultType="java.lang.String">
+		<![CDATA[
+			SELECT DATEDIFF(rentTo, #{td})
+			FROM bookrent
+			WHERE bookRentId= #{brId} AND realReturn is null;
+		]]>
+	</select>
+		
+	<select id="getBookRentId" parameterType="java.lang.String" resultType="java.lang.String">
+		<![CDATA[
+			SELECT bookRentId
+			FROM bookrent
+			WHERE bookId= #{bookId} order by bookrentId DESC LIMIT 1;
+		]]>
+	</select>
+	
+		<select id="getExpiredDay" parameterType="HashMap" resultType="java.lang.String">
+		<![CDATA[
+			SELECT DATEDIFF(rentTo, #{td})
+			FROM bookrent
+			WHERE bookRentId= #{brId} AND realReturn is null;
+		]]>
+	</select>
+	
+	<select id="isNowRent" parameterType="java.lang.String" resultType="java.lang.Integer">
+		<![CDATA[
+			SELECT count(bookRentId)
+			FROM project.bookrent
+			WHERE bookId = #{bookId} and delFlag = 0 and realReturn is null and date_format(rentTo, '%Y-%m-%d') >= date_format(now(), '%Y-%m-%d')
+		]]>
+	</select>
+	
+	<select id="isNowExpire" parameterType="java.lang.String" resultType="java.lang.Integer">
+		<![CDATA[
+			SELECT count(bookRentId)
+			FROM project.bookrent
+			WHERE bookId = #{bookId} and delFlag = 0 and realReturn is null and date_format(rentTo, '%Y-%m-%d') < date_format(now(), '%Y-%m-%d')
+		]]>
+	</select>
+
+</mapper>

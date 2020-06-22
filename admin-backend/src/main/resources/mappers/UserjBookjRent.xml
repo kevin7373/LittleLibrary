@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="ssafy.userjRentjBook">
+	<select id="getRentUserList" resultType="com.ssafy.project.model.UserjRentjBook">
+		<![CDATA[
+SELECT r.bookrentId, r.rentTo, r.rentFrom, r.bookId, r.delFlag, u.studentId, u.userId, u.userName, u.userImg, u.cityId, u.phone, b.bookImg, b.bookName, city.cityName , class.classRoom as className
+FROM user as u, project.book as b
+LEFT JOIN project.bookrent as r
+ON r.bookId = b.bookId
+LEFT JOIN project.city as city
+ON city.cityId = (select cityId from user where userId = r.userId)
+LEFT JOIN project.class as class
+ON class.classId = (select classId from user where userId = r.userId)
+WHERE u.userId = r.userId and r.delflag = 0;
+		]]>
+	</select>
+	
+	<select id="getBookDetail" parameterType="java.lang.String" resultType="com.ssafy.project.model.UserjRentjBook">
+			SELECT r.bookrentId, r.rentTo, r.rentFrom, r.bookId, r.delFlag, u.studentId, u.userId, u.userName, u.userImg, u.phone, b.bookImg, b.bookName 
+			FROM user u, bookrent r 
+			LEFT OUTER JOIN (SELECT bookImg, bookId, bookName FROM book) b 
+			ON b.bookId = r.bookId 
+			WHERE u.userId = r.userId and r.delflag = 0 and b.bookId = #{bookId};
+	</select>
+	
+	<select id="getRentUserDetail" parameterType="java.lang.String" resultType="com.ssafy.project.model.UserjRentjBook">
+			 SELECT r.bookrentId, r.rentFrom, r.rentTo, r.bookId, r.delFlag, r.realReturn, r.bookId, u.studentId, u.userId, u.userName, u.userImg, u.phone,
+    u.cityId, u.userRoleId, u.overduePeriod, u.delFlag, u.email
+			FROM user u
+			left JOIN bookrent r
+			ON r.userId = u.userId
+			WHERE r.bookRentId = #{bookRentId};
+	</select>
+	
+</mapper>

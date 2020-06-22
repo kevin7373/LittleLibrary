@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="ssafy.notwindow">
+
+	<insert id="insertNotwindow"
+		parameterType="com.ssafy.project.model.Notwindow">
+		INSERT INTO project.notwindow(userId, content, writer, title, writeDate) VALUES(#{userId},#{content},#{writer},#{title},#{writeDate})
+	</insert>
+	
+	<select id="getNotwindowList"
+		parameterType="com.ssafy.project.model.Notwindow"
+		resultType="com.ssafy.project.model.Notwindow">
+		SELECT notwindowId, userId, content, writer, title, writeDate from project.notwindow WHERE userId = #{userId} ORDER BY notwindowId DESC LIMIT 3;
+	</select>
+	
+	<delete id="deleteNotwindow"
+		parameterType="com.ssafy.project.model.Notwindow">
+		DELETE FROM project.notwindow WHERE notwindowId=  #{notwindowId}
+	</delete>
+	
+	
+	
+</mapper>

@@ -1,0 +1,210 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="ssafy.book">
+
+	<select id="getAllBookList" parameterType="HashMap"
+		resultType="com.ssafy.project.model.Book">
+		SELECT b.bookId, b.bookISBN, b.bookName, b.bookPrice, b.publisher,
+		b.publishDate, b.author, b.bookImg, b.rentCnt, b.categoryId, b.cityId,
+		b.classId, c.categoryName, city.cityName, class.classRoom as className
+		FROM project.book AS b
+		LEFT JOIN
+		project.category AS c
+		ON b.categoryId =
+		c.categoryId
+		LEFT JOIN project.city AS city
+		ON b.cityId = city.cityId
+		LEFT JOIN project.class as class
+		ON b.classId = class.classId
+		WHERE
+		b.delFlag = 0 and 1=1
+		<if test="userRoleId != 1">
+			AND b.cityId = #{cityId}
+		</if>
+	</select>
+
+	<select id="getBestBookList" parameterType="java.lang.String"
+		resultType="com.ssafy.project.model.Book">
+		SELECT bookId, bookISBN, bookName, bookPrice, publisher,
+		publishDate, author, bookImg, sum(rentCnt) as rentCnt, categoryId,
+		cityId, classId
+		FROM project.book where 1=1
+		<if test="userRoleId != 1">
+			AND cityId = #{cityId}
+		</if>
+		group by bookISBN 
+		order by sum(rentCnt) DESC
+		limit 5;
+	</select>
+
+	<select id="getAllBookCnt" parameterType="HashMap"
+		resultType="java.lang.Integer">
+		SELECT count(*)
+		FROM project.book
+		WHERE delFlag = 0 AND 1=1
+		<if test="userRoleId != 1">
+			AND cityId = #{cityId}
+		</if>
+	</select>
+
+	<insert id="addBook"
+		parameterType="com.ssafy.project.model.Book">
+		INSERT
+		INTO project.book(bookId, bookISBN, bookName,
+		bookPrice, publisher, publishDate, author, bookImg, rentCnt,
+		categoryId, cityId, classId, bookSummary, delFlag)
+		values(#{bookId},
+		#{bookISBN}, #{bookName}, #{bookPrice}, #{publisher}, #{publishDate},
+		#{author}, #{bookImg}, #{rentCnt}, #{categoryId}, #{cityId},
+		#{classId}, #{bookSummary}, #{delFlag})
+	</insert>
+
+	<select id="getBookById" parameterType="java.lang.String"
+		resultType="com.ssafy.project.model.Book">
+		SELECT b.bookId, b.bookISBN, b.bookName, b.bookPrice,
+		b.publisher, b.publishDate, b.author, b.bookImg, b.rentCnt,
+		c.categoryName, city.cityName, class.classRoom as className, b.categoryId, b.cityId, b.classId, b.bookSummary
+		FROM
+		project.book as b,
+		(SELECT classRoom FROM
+		project.class WHERE classId =
+		(SELECT classId FROM project.book WHERE bookId = #{bookId})) as class,
+		(SELECT cityName FROM project.city WHERE cityId = (SELECT cityId FROM
+		project.book WHERE bookId = #{bookId})) as city,
+		(SELECT categoryName
+		FROM project.category WHERE categoryId = (SELECT categoryId
+		FROM
+		project.book WHERE bookId = #{bookId})) as c
+		WHERE bookId = #{bookId}
+	</select>
+
+	<select id="getBookByName" parameterType="java.lang.String"
+		resultType="com.ssafy.project.model.Book">
+		SELECT bookId, bookISBN, bookName, bookPrice, publisher,
+		publishDate, author, bookImg, rentCnt, categoryId, cityId, classId
+		FROM project.book
+		WHERE bookName = #{bookName}
+		LIMIT 1
+	</select>
+
+	<select id="getBookByISBN" parameterType="java.lang.String"
+		resultType="com.ssafy.project.model.Book">
+		SELECT bookId, bookISBN, bookName, bookPrice, publisher,
+		publishDate, author, bookImg, rentCnt, categoryId, cityId, classId
+		FROM project.book
+		WHERE bookISBN = #{bookISBN}
+		LIMIT 1
+	</select>
+
+	<select id="getBookDetailById" parameterType="java.lang.String"
+		resultType="com.ssafy.project.model.BookDetail">
+		SELECT b.bookImg, b.bookISBN, b.bookId, b.bookName,
+		r.rentFrom, r.rentTo, r.realReturn, b.publisher, b.author,
+		b.publishDate, b.bookPrice, c.categoryName, b.rentCnt, city.cityName,
+		class.classRoom as className
+		FROM
+		project.book as b,
+		(SELECT rentFrom,
+		rentTo, realReturn, delFlag FROM project.bookrent WHERE bookId =
+		#{bookId} ORDER BY rentFrom DESC LIMIT 1) as r,
+		(SELECT categoryName
+		FROM project.category WHERE categoryId = (SELECT categoryId FROM
+		project.book WHERE bookId = #{bookId})) as c,
+		(SELECT cityName
+		FROM
+		project.city WHERE cityId = (SELECT cityId FROM project.book WHERE
+		bookId = #{bookId})) as city,
+		(SELECT classRoom FROM project.class
+		WHERE classId = (SELECT classId FROM project.book WHERE bookId =
+		#{bookId})) as class
+		WHERE b.bookId = #{bookId};
+	</select>
+
+	<select id="getReturnBookDetailByBookRentId"
+		parameterType="HashMap"
+		resultType="com.ssafy.project.model.BookDetail">
+		SELECT b.bookImg, b.bookISBN, b.bookId, b.bookName,
+		r.rentFrom, r.rentTo, r.realReturn, b.publisher, b.author,
+		b.publishDate, b.bookPrice, c.categoryName, b.rentCnt, city.cityName,
+		class.classRoom as className
+		FROM project.book as b,
+		(SELECT rentFrom,
+		rentTo, realReturn FROM project.bookrent WHERE bookRentId =
+		#{bookRentId}) as r,
+		(SELECT categoryName FROM project.category WHERE
+		categoryId = (SELECT categoryId FROM project.book WHERE bookId =
+		(SELECT bookId FROM project.bookrent WHERE bookRentId =
+		#{bookRentId}))) as c,
+		(SELECT cityName FROM project.city WHERE cityId
+		= #{cityId}) as city,
+		(SELECT classRoom FROM project.class WHERE
+		classId = (SELECT classId FROM project.book WHERE bookId = (SELECT
+		bookId FROM project.bookrent WHERE bookRentId = #{bookRentId}))) as
+		class
+		WHERE b.bookId = (SELECT
+		bookId FROM project.bookrent WHERE
+		bookRentId = #{bookRentId})
+	</select>
+
+	<delete id="deleteBook" parameterType="java.lang.String">
+		DELETE
+		FROM project.book 
+		WHERE bookId = #{bookId};
+	</delete>
+
+	<insert id="addBookByFile"
+		parameterType="com.ssafy.project.model.Book">
+		<!-- INSERT INTO project.book(bookId, bookISBN, bookName, bookPrice, publisher, 
+			publishDate, author, bookImg, rentCnt, categoryId, cityId, classId, bookSummary, 
+			delFlag) VALUES(#{bookId}, #{bookISBN}, #{bookName}, #{bookPrice}, #{publisher}, 
+			#{publishDate}, #{author}, #{bookImg}, #{rentCnt}, (SELECT categoryId FROM 
+			project.category WHERE categoryName = #{categoryName}), (SELECT cityId FROM 
+			project.city WHERE cityName = #{cityName}), (SELECT classId FROM project.class 
+			WHERE classRoom = #{className}), #{bookSummary}, #{delFlag}) -->
+		INSERT INTO project.book(bookId, bookISBN, bookName, bookPrice,
+		publisher, publishDate, author, bookImg, rentCnt, categoryId, cityId,
+		classId, bookSummary, delFlag)
+		VALUES(#{bookId}, #{bookISBN},
+		#{bookName}, #{bookPrice}, #{publisher}, #{publishDate}, #{author},
+		#{bookImg}, #{rentCnt}, #{categoryId}, #{cityId}, #{classId},
+		#{bookSummary}, #{delFlag})
+	</insert>
+
+	<select id="getCityIdByCityName"
+		parameterType="java.lang.String" resultType="java.lang.String">
+		SELECT cityId
+		FROM
+		project.city
+		WHERE cityName = #{cityName}
+	</select>
+	<select id="getClassIdByClassName"
+		parameterType="java.lang.String" resultType="java.lang.String">
+		SELECT classId
+		FROM
+		project.class
+		WHERE classRoom = #{className}
+	</select>
+
+	<select id="getexistBookCityIdList"
+		parameterType="java.lang.String" resultType="java.lang.String">
+		SELECT cityId
+		FROM
+		project.book
+		WHERE bookId = #{inputBid}
+	</select>
+	
+	<select id="checkBookId" parameterType="HashMap" resultType="java.lang.Integer">
+		SELECT count(bookId)
+		FROM project.book
+		WHERE bookId = #{bookId} and cityId = #{cityId}
+	</select>
+	
+	<select id="getCityIdByBookId" parameterType="java.lang.String" resultType="java.lang.String">
+		SELECT cityId
+		FROM user
+		WHERE userId in (SELECT userId FROM bookrent WHERE bookId = #{bookId} and realReturn is null and delFlag = 0)
+	</select>
+
+</mapper>

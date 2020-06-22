@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="ssafy.qnaComment">
+	<insert id="insertQnaComment" parameterType="com.ssafy.project.model.QnaComment">
+		INSERT INTO project.qnacomment (qnaCommentContent, qnaCommentWriter, qnaCommentDate, qnaId) VALUES(#{qnaCommentContent},#{qnaCommentWriter},#{qnaCommentDate},#{qnaId})
+
+	</insert>
+
+	<select id="getAllQnaComment" parameterType="com.ssafy.project.model.QnaComment" resultType="com.ssafy.project.model.QnaComment">
+		SELECT qnaCommentId, qnaCommentContent, qnaCommentWriter, qnaCommentDate, qnaId from project.qnacomment WHERE qnaId = #{qnaId}
+	</select>
+	
+	<update id="updateQnaComment" parameterType="com.ssafy.project.model.QnaComment">
+		UPDATE project.qnacomment
+		SET qnaCommentContent = #{qnaCommentContent}, qnaCommentDate = #{qnaCommentDate}
+		WHERE qnaCommentId = #{qnaCommentId}
+	</update>
+	
+	<delete id="deleteQnaComment" parameterType="java.lang.Integer">
+		DELETE
+		FROM project.qnacomment
+		WHERE qnaCommentId = #{qnaCommentId}
+	</delete>
+
+</mapper>
