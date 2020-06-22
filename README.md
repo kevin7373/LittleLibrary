@@ -1,4 +1,4 @@
-![image-20200303110216444](https://lab.ssafy.com/webmobile1-sub3/s02p13b206/raw/develop/asset/images/BOOK%20SSAFY%20verion%201.0%20readme/BOOK%20SSAFY%20version1.0_1.PNG)
+![image-20200303110216444](https://github.com/kevin7373/LittleLibrary/asset/images/BOOK%20SSAFY%20verion%201.0%20readme/BOOK%20SSAFY%20version1.0_1.PNG)
 
 ![image-20200303110227107](https://lab.ssafy.com/webmobile1-sub3/s02p13b206/raw/develop/asset/images/BOOK%20SSAFY%20verion%201.0%20readme/BOOK%20SSAFY%20version1.0_2.PNG)
 
